@@ -1,0 +1,22 @@
+#!/bin/bash
+
+declare count=$1
+shift
+
+dprint()
+{
+	_msg="$*"
+	printf "$(date +'%F %R'): "
+	printf "$_msg"
+}
+
+sudo ~/bin/adb devices
+for((i=1;i<=count;++i)); do
+	time ( dprint "## $i/$count ##\n";
+	sleep 10s;
+	while adb $* wait-for-device logcat -d SystemBroadcastReceiver:I 2>&1 | grep 'Boot has been completed'; test $? -ne 0; do
+		dprint "sleep 2s\n"
+		sleep 2s
+	done )
+	adb $* wait-for-device reboot;
+done

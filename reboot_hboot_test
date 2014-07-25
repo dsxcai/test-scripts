@@ -1,0 +1,16 @@
+#!/bin/bash
+declare count=$1;
+shift;
+
+dprint()
+{
+	_msg="$*"
+	printf "$(date +'%F %R'): "
+	printf "$_msg"
+}
+
+for((i=1;i<=count;++i)); do
+	time ( dprint "## $i/$count ##\n";
+	sudo TOT/tools/bin/fastboot $* reboot-bootloader;
+	sleep 2s )
+done

@@ -1,0 +1,17 @@
+#!/bin/bash
+declare _all_pt=/tmp/all_pt.zip
+declare _fastboot=TOT/tools/bin/fastboot
+declare _tot_image_path=TOT/vendor_htc_flounder
+declare _test_image_path=test/signed
+
+. 2-1_flash_new_signed_bl_images
+
+rm -f $_all_pt; zip -j9 $_all_pt $_tot_image_path/pt_*
+
+sudo $_fastboot $* \
+flash gp1 $_tot_image_path/gp1.img \
+flash zip $_all_pt \
+reboot-bootloader
+sleep 2s
+
+. 2-2_flash_TOT_PDK_images $*

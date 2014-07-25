@@ -1,0 +1,58 @@
+#!/bin/bash
+
+declare _all_pt=/tmp/all_pt.zip
+declare _fastboot=TOT/tools/bin/fastboot
+declare _adb=TOT/tools/bin/adb
+declare _tot_image_path=TOT/vendor_htc_flounder
+declare _test_image_path=test/signed
+declare _dashboard_pdk=TOT/dashboard/AOSP/*
+
+dprint()
+{
+	_msg="$*"
+	printf "$(date +'%F %R'): "
+	printf "$_msg"
+}
+
+dprint "Unlock-critical partitions...\n"
+sudo $_fastboot $* oem set_unlock_ability 1
+sudo $_fastboot $* oem set_flash_state 1
+dprint "Flashing volantis bootloaders@TOT...\n"
+. 1-6_flash_TOT_bl_images $*
+dprint "Flashing volantis pdk@TOT...\n"
+. 1-6_flash_TOT_PDK_images $*
+sleep 2s
+dprint "Wait for device boot up, then press enter to continue..."; read
+sudo $_adb devices
+dprint "Check the box on screen to authenticate your adb host, then press enter to continue..."; read
+sudo $_adb $* reboot-bootloader
+sleep 2s
+
+dprint "Flashing volantis testing bootloaders...\n"
+. 2-1_flash_new_signed_bl_images $*
+. 2-2_flash_TOT_PDK_images $*
+sleep 2s
+dprint "Wait for device boot up, then press enter to continue..."; read
+sudo $_adb devices
+dprint "Check the box on screen to authenticate your adb host, then press enter to continue..."; read
+sudo $_adb $* reboot-bootloader
+sleep 2s
+
+dprint "Unlock-critical partitions...\n"
+sudo $_fastboot $* oem set_unlock_ability 1
+sudo $_fastboot $* oem set_flash_state 1
+dprint "Flashing volantis pdk@TOT with testing bootloaders...\n"
+. 2-3_flash_TOT_and_new_bl $*
+sleep 2s
+dprint "Wait for device boot up, then press enter to continue..."; read
+sudo $_adb devices
+dprint "Check the box on screen to authenticate your adb host, then press enter to continue..."; read
+sudo $_adb $* reboot-bootloader
+sleep 2s
+
+dprint "Flashing volantis pdk@TOT with bootloaders@TOT...\n"
+. 2-4_flash_all_back_to_TOT $*
+sleep 2s
+dprint "Wait for device boot up, then press enter to continue..."; read
+sudo $_adb $* reboot-bootloader
+. 2-5_upgrade_downgrade_bootloader_img $*

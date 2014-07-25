@@ -1,0 +1,17 @@
+#!/bin/bash
+declare _all_pt=/tmp/all_pt.zip
+declare _fastboot=TOT/tools/bin/fastboot
+declare _tot_image_path=TOT/vendor_htc_flounder
+declare _test_image_path=test/signed
+
+sudo $_fastboot $* \
+flash bct $_test_image_path/rawbct.img \
+flash hboot $_test_image_path/hboot.img \
+flash nvtboot $_test_image_path/nvtboot.img \
+flash nvtbootwb0 $_test_image_path/nvtbootwb0.bin \
+flash tos $_test_image_path/tos.img \
+flash mts_preboot_prod $_test_image_path/mts_preboot_prod \
+flash mts_prod $_test_image_path/mts_prod \
+reboot-bootloader
+
+sleep 2s

@@ -1,0 +1,36 @@
+#!/bin/bash
+
+declare _all_pt=/tmp/all_pt.zip
+declare _fastboot=TOT/tools/bin/fastboot
+declare _adb=TOT/tools/bin/adb
+declare _tot_image_path=TOT/vendor_htc_flounder
+declare _test_image_path=test/signed
+declare _dashboard_pdk=TOT/dashboard/AOSP/*
+
+( cd $_tot_image_path; \
+sudo ./nvflash \
+--read EKS /tmp/eks.bin \
+--read MFG /tmp/mfg.bin \
+--read BIF /tmp/bif.bin \
+--bl hboot.img \
+--preboot mts_preboot_prod \
+--bootpack mts_prod \
+--applet nvtboot.img \
+--go \
+&& \
+sudo ./nvflash --resume \
+--bct Volantis64_924MHz_DRAM_BCT_20140605.cfg \
+--setbct \
+--odmdata 0x80000 \
+--configfile flash_16g_rescue.cfg \
+--create \
+--bl hboot.img \
+--preboot mts_preboot_prod \
+--bootpack mts_prod \
+--applet nvtboot.img \
+--go; \
+)
+
+sleep 2s
+sudo $_fastboot devices
+. 1-6_flash_TOT_bl_images

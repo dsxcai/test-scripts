@@ -1,0 +1,69 @@
+#!/bin/bash
+
+unset _getvar_all
+declare -A _getvar_all='(
+	["version"]="0.5"
+	["version-bootloader"]="-"
+	["version-baseband"]="-"
+	["version-cpld"]="None"
+	["version-microp"]="None"
+	["version-main"]="-"
+	["version-misc"]="-"
+	["version-mts"]="-"
+	["cpu-revision"]="-"
+	["serialno"]="-"
+	["cssn"]="-"
+	["imei"]="-"
+	["meid"]="-"
+	["product"]="-"
+	["variant"]="-"
+	["platform"]="hTCBtegra"
+	["modelid"]="-"
+	["cidnum"]="11111111"
+	["battery-status"]="good"
+	["battery-voltage"]="4200mV"
+	["partition-layout"]="Generic"
+	["security"]="off"
+	["build-mode"]="-"
+	["boot-mode"]="-"
+	["commitno-bootloader"]="-"
+	["hbootpreupdate"]="1"
+	["gencheckpt"]="-"
+	["partition-size:hboot"]="0x600000"
+	["partition-type:hboot"]="raw"
+	["partition-size:recovery"]="0x2000000"
+	["partition-type:recovery"]="raw"
+	["partition-size:boot"]="0x2000000"
+	["partition-type:boot"]="raw"
+	["partition-size:system"]="0x50000000"
+	["partition-type:system"]="ext4"
+	["partition-size:cache"]="0x10000000"
+	["partition-type:cache"]="ext4"
+	["partition-size:userdata"]="0x6B0000000"
+	["partition-type:userdata"]="f2fs"
+	["partition-size:vendor"]="0x10000000"
+	["partition-type:vendor"]="ext4"
+	["max-download-size"]="-"
+)'
+
+sudo TOT/tools/fastboot devices
+for i in ${!_getvar_all[@]}; do
+	val="${_getvar_all[$i]}"
+	res=$(sudo TOT/tools/fastboot getvar $* $i 2>&1 | head -1 | cut -s -d " " -f 2-)
+
+	if [[ "$val" != "-" ]]; then
+		#Check the result
+		if [[ "$res" != "$val" ]]; then
+			echo "Failed: $i value=$res, should be $val"
+			break
+		fi
+		echo "Passed $i: $res"
+	else
+		if [[ "$res" == "Unknown command" ]]; then
+			echo "#Failed: $i value=$res"
+			break
+		else
+			echo "Check $i: value=$res"
+		fi
+	fi
+done | sort

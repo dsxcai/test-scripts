@@ -1,0 +1,29 @@
+#!/bin/bash
+declare count=$1;
+declare _tty=$2;
+shift 2;
+
+dprint()
+{
+	_msg="$*"
+	printf "$(date +'%F %R'): "
+	printf "$_msg"
+}
+
+declare ret=-1;
+sudo stty -F $_tty 115200 cs8 -cstopb -parenb -cooked min 1 time 1
+for((i=1;i<=count;++i)); do
+	ret=-1;
+	time ( dprint "## $i/$count ##\n";
+	sudo TOT/tools/bin/fastboot $* oem enter hboot && \
+	sleep 2s && \
+	sudo bash -c "echo -e \"gotofastboot\n\" > $_tty" && \
+	sleep 1s ) && ret=0 || break;
+done
+
+if [[ $ret -ne 0 ]]; then
+	echo "FAIL"
+else
+	echo "SUCCESS"
+fi
+return $ret
