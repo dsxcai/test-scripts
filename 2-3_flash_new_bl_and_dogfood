@@ -14,4 +14,4 @@ flash zip $_all_pt \
 reboot-bootloader
 sleep 2s
 
-. 2-2_flash_TOT_PDK_images $*
+. 2-2_flash_google_dogfood $*
