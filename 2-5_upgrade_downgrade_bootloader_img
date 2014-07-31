@@ -1,5 +1,5 @@
 #!/bin/bash
-( cd TOT/vendor_htc_flounder
+( cd ../TOT/vendor_htc_flounder
   _h=$(git log -1 --format=%h)
   cp bootloader.img bootloader_orig.img
   cp ../../test/signed/{tos.img,rawbct.img,nvtbootwb0.bin,nvtboot.img,hboot.img,mts_preboot_prod,mts_prod} .
@@ -18,4 +18,4 @@
   rm -f bootloader_new.img bootloader_orig.img
   git reset --hard $_h
  )
-sudo TOT/tools/bin/fastboot $* reboot
+sudo ../TOT/tools/bin/fastboot $* reboot

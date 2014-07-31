@@ -4,9 +4,9 @@
 #(Finally, this test is to make sure the new bootloader can flash *different* bootloader images and make sure the BCT update mechanism is correct. Go to vendor/htc/flounder and flash all the previous version bootloaders again. If mts_preboot_prod/mts_prod images )
 
 declare _all_pt=/tmp/all_pt.zip
-declare _fastboot=TOT/tools/bin/fastboot
-declare _tot_image_path=TOT/vendor_htc_flounder
-declare _test_image_path=test/signed
+declare _fastboot=../TOT/tools/bin/fastboot
+declare _tot_image_path=../TOT/vendor_htc_flounder
+declare _test_image_path=../test/signed
 
 rm -f $_all_pt; zip -j9 $_all_pt $_tot_image_path/pt_*
 

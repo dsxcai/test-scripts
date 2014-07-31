@@ -1,7 +1,7 @@
 #!/bin/bash
 
-declare _largezip_path=test/largezip
-declare _bigsystem_path=test/bigsystem
+declare _largezip_path=../test/largezip
+declare _bigsystem_path=../test/bigsystem
 
 wait_to_bootup()
 {
@@ -14,14 +14,14 @@ get_partition_md5()
 	adb $* wait-for-device shell md5 /dev/block/platform/sdhci-tegra.3/by-name/APP /dev/block/platform/sdhci-tegra.3/by-name/VNR
 }
 
-sudo TOT/tools/adb devices
+sudo ../TOT/tools/adb devices
 
 declare res1=""
 declare res2=""
 
-sudo TOT/tools/fastboot $* -w
+sudo ../TOT/tools/fastboot $* -w
 sleep 1s;
-sudo TOT/tools/fastboot $* \
+sudo ../TOT/tools/fastboot $* \
 	flash system $_bigsystem_path/system.img \
 	flash boot $_bigsystem_path/boot.img \
 	flash recovery $_bigsystem_path/recovery.img \

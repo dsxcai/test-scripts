@@ -1,10 +1,10 @@
 #!/bin/bash
 
 declare _all_pt=/tmp/all_pt.zip
-declare _fastboot=TOT/tools/bin/fastboot
-declare _adb=TOT/tools/bin/adb
-declare _tot_image_path=TOT/vendor_htc_flounder
-declare _test_image_path=test/signed
+declare _fastboot=../TOT/tools/bin/fastboot
+declare _adb=../TOT/tools/bin/adb
+declare _tot_image_path=../TOT/vendor_htc_flounder
+declare _test_image_path=../test/signed
 
 ( cd $_tot_image_path; \
 sudo ./nvflash \
