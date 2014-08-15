@@ -14,27 +14,27 @@ dprint()
 }
 
 dprint "Backup EKS, MFG, and BIF, then recover pre-bootloaders to ToT...\n"
-( cd bootloaders_3.19; \
-sudo ../$_tot_image_path/nvflash \
+( cd ../bootloaders_3.19; \
+sudo $_tot_image_path/nvflash \
 --read EKS /tmp/eks.bin \
 --read MFG /tmp/mfg.bin \
 --read BIF /tmp/bif.bin \
---bl ../$_tot_image_path/hboot.img \
---preboot ../$_tot_image_path/mts_preboot_prod \
---bootpack ../$_tot_image_path/mts_prod \
---applet ../$_tot_image_path/nvtboot.img \
+--bl $_tot_image_path/hboot.img \
+--preboot $_tot_image_path/mts_preboot_prod \
+--bootpack $_tot_image_path/mts_prod \
+--applet $_tot_image_path/nvtboot.img \
 --go \
 && \
-sudo ../$_tot_image_path/nvflash --resume \
+sudo $_tot_image_path/nvflash --resume \
 --bct Volantis64_924MHz_Pre_BCT_20140327.cfg \
 --setbct \
 --odmdata 0x80000 \
 --configfile flash_16g.cfg \
 --create \
---bl ../$_tot_image_path/hboot.img \
---preboot ../$_tot_image_path/mts_preboot_prod \
---bootpack ../$_tot_image_path/mts_prod \
---applet ../$_tot_image_path/nvtboot.img \
+--bl $_tot_image_path/hboot.img \
+--preboot $_tot_image_path/mts_preboot_prod \
+--bootpack $_tot_image_path/mts_prod \
+--applet $_tot_image_path/nvtboot.img \
 --go; \
 )
 
@@ -44,8 +44,8 @@ sudo $_fastboot oem reboot_nvflash
 dprint "Recover bootloaders to 3.19 release via nvflash...\n"
 sleep 2s
 
-( cd bootloaders_3.19; \
-sudo ../$_tot_image_path/nvflash \
+( cd ../bootloaders_3.19; \
+sudo $_tot_image_path/nvflash \
 --bct Volantis64_924MHz_Pre_BCT_20140327.cfg \
 --setbct \
 --odmdata 0x80000 \
@@ -61,19 +61,19 @@ sudo ../$_tot_image_path/nvflash \
 sleep 2s
 dprint "Recover HBoot to 3.22 release via fastboot...\n"
 #declare _cssn=$(sudo $_fastboot getvar cssn 2>&1 | head -1 | cut -d " " -f 2)
-sudo $_fastboot $* flash hboot bootloaders_3.22/hboot.img flash nvtboot bootloaders_3.22/nvtboot.img reboot-bootloader
+sudo $_fastboot $* flash hboot ../bootloaders_3.22/hboot.img flash nvtboot ../bootloaders_3.22/nvtboot.img reboot-bootloader
 sleep 2s
 sudo $_fastboot $* \
-flash bct bootloaders_3.22/rawbct.img \
-flash hboot bootloaders_3.22/hboot.img \
-flash nvtboot bootloaders_3.22/nvtboot.img \
-flash nvtbootwb0 bootloaders_3.22/nvtbootwb0.bin \
-flash tos bootloaders_3.22/tos.img \
-flash mts_preboot_prod bootloaders_3.22/mts_preboot_prod \
-flash mts_prod bootloaders_3.22/mts_prod \
-flash gp1 bootloaders_3.22/gp1.img \
+flash bct ../bootloaders_3.22/rawbct.img \
+flash hboot ../bootloaders_3.22/hboot.img \
+flash nvtboot ../bootloaders_3.22/nvtboot.img \
+flash nvtbootwb0 ../bootloaders_3.22/nvtbootwb0.bin \
+flash tos ../bootloaders_3.22/tos.img \
+flash mts_preboot_prod ../bootloaders_3.22/mts_preboot_prod \
+flash mts_prod ../bootloaders_3.22/mts_prod \
+flash gp1 ../bootloaders_3.22/gp1.img \
 flash eks /tmp/eks.bin \
-flash zip bootloaders_3.22/all_pt.zip \
+flash zip ../bootloaders_3.22/all_pt.zip \
 reboot-bootloader
 sleep 2s
 
