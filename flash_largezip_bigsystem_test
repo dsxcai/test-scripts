@@ -14,8 +14,6 @@ get_partition_md5()
 	adb $* wait-for-device shell md5 /dev/block/platform/sdhci-tegra.3/by-name/APP /dev/block/platform/sdhci-tegra.3/by-name/VNR
 }
 
-sudo ../TOT/tools/adb devices
-
 declare res1=""
 declare res2=""
 
@@ -32,7 +30,7 @@ wait_to_bootup && res1=$(get_partition_md5) || res1="FAIL"
 
 adb $* reboot-bootloader
 sleep 5s;
-sudo ~/bin/htc_fastboot $* -w
+sudo ../TOT/tools/fastboot $* -w
 sudo ~/bin/htc_fastboot $* flash zip $_largezip_path/rom.img
 sudo ~/bin/htc_fastboot $* reboot
 wait_to_bootup && res2=$(get_partition_md5) || res2="FAIL"
