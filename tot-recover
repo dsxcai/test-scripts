@@ -15,7 +15,6 @@ sudo ./nvflash \
 --preboot mts_preboot_prod \
 --bootpack mts_prod \
 --applet nvtboot.img \
---go \
 && \
 sudo ./nvflash --resume \
 --bct Volantis64_924MHz_DRAM_BCT_20140605.cfg \
@@ -23,11 +22,27 @@ sudo ./nvflash --resume \
 --odmdata 0x80000 \
 --configfile flash_16g_rescue.cfg \
 --create \
+--skip_part APP \
+--skip_part LNX \
+--skip_part SOS \
+--skip_part VNR \
+--skip_part EKS \
+--skip_part MFG \
+--skip_part BIF \
 --bl hboot.img \
 --preboot mts_preboot_prod \
 --bootpack mts_prod \
 --applet nvtboot.img \
---go; \
+&& \
+sudo ./nvflash --resume \
+--download MFG /tmp/mfg.bin \
+--download EKS /tmp/eks.bin \
+--download BIF /tmp/bif.bin \
+--bl hboot.img \
+--preboot mts_preboot_prod \
+--bootpack mts_prod \
+--applet nvtboot.img \
+--go;
 )
 
 sleep 2s
