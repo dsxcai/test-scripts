@@ -11,7 +11,7 @@ sudo ./nvflash \
 --read EKS /tmp/eks.bin \
 --read MFG /tmp/mfg.bin \
 --read BIF /tmp/bif.bin \
---bl hboot.img \
+--bl hboot_eng.img \
 --preboot mts_preboot_prod \
 --bootpack mts_prod \
 --applet nvtboot.img \
@@ -29,7 +29,8 @@ sudo ./nvflash --resume \
 --skip_part EKS \
 --skip_part MFG \
 --skip_part BIF \
---bl hboot.img \
+--skip_part EBT \
+--bl hboot_eng.img \
 --preboot mts_preboot_prod \
 --bootpack mts_prod \
 --applet nvtboot.img \
@@ -38,7 +39,8 @@ sudo ./nvflash --resume \
 --download MFG /tmp/mfg.bin \
 --download EKS /tmp/eks.bin \
 --download BIF /tmp/bif.bin \
---bl hboot.img \
+--download EBT hboot_eng.img \
+--bl hboot_eng.img \
 --preboot mts_preboot_prod \
 --bootpack mts_prod \
 --applet nvtboot.img \
