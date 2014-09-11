@@ -19,7 +19,7 @@ sudo $_tot_image_path/nvflash \
 --read EKS /tmp/eks.bin \
 --read MFG /tmp/mfg.bin \
 --read BIF /tmp/bif.bin \
---bl $_tot_image_path/hboot.img \
+--bl $_tot_image_path/hboot_eng.img \
 --preboot $_tot_image_path/mts_preboot_prod \
 --bootpack $_tot_image_path/mts_prod \
 --applet $_tot_image_path/nvtboot.img \
@@ -31,7 +31,7 @@ sudo $_tot_image_path/nvflash --resume \
 --odmdata 0x80000 \
 --configfile flash_16g.cfg \
 --create \
---bl $_tot_image_path/hboot.img \
+--bl $_tot_image_path/hboot_eng.img \
 --preboot $_tot_image_path/mts_preboot_prod \
 --bootpack $_tot_image_path/mts_prod \
 --applet $_tot_image_path/nvtboot.img \
@@ -77,4 +77,5 @@ flash zip ../bootloaders_3.22/all_pt.zip \
 reboot-bootloader
 sleep 2s
 
+. 1-6_flash_TOT_bl_images $*
 . 1-6_flash_TOT_bl_images $*
