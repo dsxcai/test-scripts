@@ -1,0 +1,13 @@
+#!/bin/bash
+cp -f -v \
+../../test/signed/hboot_ship.img \
+../../test/signed/hboot_eng.img \
+../../test/signed/mts_preboot_prod \
+../../test/signed/mts_prod \
+../../test/signed/nvtboot.img \
+../../test/signed/nvtbootwb0.bin \
+../../test/signed/rawbct_ship.img \
+../../test/signed/rawbct_eng.img \
+../../test/signed/tos.img \
+\
+.

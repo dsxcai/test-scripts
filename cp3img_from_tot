@@ -1,0 +1,6 @@
+#!/bin/bash
+
+declare _f="TOT_T1_Generic_WWE_K44_Mainline_GEP_64bits_hboot_java7_build.log"
+cp -v ../../../TOT/vendor_htc_flounder/{nvtboot*,hboot.img} .
+rm -f $_f
+touch $_f

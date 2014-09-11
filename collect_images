@@ -1,0 +1,37 @@
+#!/bin/bash
+
+_download_dir=~/Downloads
+_dest_dir=dashboard_hboot_build
+
+_cl=$1
+_ship=$_download_dir/${_cl}_T1_Generic_WWE_K44_Mainline_GEP_SHIP_64bits_hboot_java7.zip
+_eng=$_download_dir/${_cl}_T1_Generic_WWE_K44_Mainline_GEP_64bits_hboot_java7.zip
+
+rm -rf $_dest_dir/*
+git checkout HEAD -- $_dest_dir/cp3img
+unzip -o $_ship -d $_dest_dir/ hboot.img *.log
+mv $_dest_dir/hboot.img $_dest_dir/hboot_ship.img
+unzip -o $_eng -d $_dest_dir/ hboot.img nvtboot.img nvtbootwb0.bin *.log
+mv $_dest_dir/hboot.img $_dest_dir/hboot_eng.img
+
+_log=$(git --git-dir=../../TOT/vendor_htc_flounder/.git log --oneline -1)
+echo "TOT: $_log" > info.txt
+for i in ../../TOT/vendor_htc_flounder/{mts_prod,mts_preboot_prod,tos.img,rawbct_*.img}; do
+	_md5=$(md5sum $i | cut -d " " -f 1)
+	chmod 644 $i
+	cp -f $i .
+	echo "  $_md5 $(basename $i)" >> info.txt
+done
+
+echo "HBoot: $_cl" >> info.txt
+for i in dashboard_hboot_build/{hboot_*.img,nvtboot.img,nvtbootwb0.bin}; do
+	_md5=$(md5sum $i | cut -d " " -f 1)
+	chmod 644 $i
+	cp -f $i .
+	echo "  $_md5 $(basename $i)" >> info.txt
+done
+
+git add .
+git commit -a -m "$2
+
+$(cat info.txt)"

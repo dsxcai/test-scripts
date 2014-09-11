@@ -1,0 +1,4 @@
+git add *
+git commit -a -m "$1
+
+$(cat info.txt)"
