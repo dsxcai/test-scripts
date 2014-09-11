@@ -46,10 +46,10 @@ declare -A _getvar_all='(
 	["max-download-size"]="-"
 )'
 
-sudo ../TOT/tools/fastboot devices
+sudo ../TOT/tools/bin/fastboot devices
 for i in ${!_getvar_all[@]}; do
 	val="${_getvar_all[$i]}"
-	res=$(sudo ../TOT/tools/fastboot getvar $* $i 2>&1 | head -1 | cut -s -d " " -f 2-)
+	res=$(sudo ../TOT/tools/bin/fastboot getvar $* $i 2>&1 | head -1 | cut -s -d " " -f 2-)
 
 	if [[ "$val" != "-" ]]; then
 		#Check the result

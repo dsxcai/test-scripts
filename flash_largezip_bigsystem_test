@@ -22,9 +22,9 @@ get_partition_md5()
 declare res1=""
 declare res2=""
 
-sudo ../TOT/tools/fastboot $* -w
+sudo ../TOT/tools/bin/fastboot $* -w
 sleep 1s;
-sudo ../TOT/tools/fastboot $* \
+sudo ../TOT/tools/bin/fastboot $* \
 	flash system $_bigsystem_path/system.img \
 	flash boot $_bigsystem_path/boot.img \
 	flash recovery $_bigsystem_path/recovery.img \
@@ -37,7 +37,7 @@ echo "$res1";
 
 adb $* reboot-bootloader
 sleep 5s;
-sudo ../TOT/tools/fastboot $* -w
+sudo ../TOT/tools/bin/fastboot $* -w
 sudo ~/bin/htc_fastboot $* flash zip $_largezip_path/rom.img
 sudo ~/bin/htc_fastboot $* reboot
 wait_to_bootup && res2=$(get_partition_md5) || res2="FAIL"

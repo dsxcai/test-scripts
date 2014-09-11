@@ -3,7 +3,7 @@
 declare count=$1
 declare o_ver=$2
 declare n_ver=$3
-declare _fastboot="sudo ../TOT/tools/fastboot"
+declare _fastboot="sudo ../TOT/tools/bin/fastboot"
 declare o_hboot=../TOT/vendor_htc_flounder/hboot.img
 declare n_hboot=/tmp/hboot_diag.img
 
