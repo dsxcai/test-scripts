@@ -23,7 +23,6 @@ declare -A _getvar_all='(
 	["battery-status"]="good"
 	["battery-voltage"]="4200mV"
 	["partition-layout"]="Generic"
-	["security"]="off"
 	["build-mode"]="-"
 	["boot-mode"]="-"
 	["commitno-bootloader"]="-"
