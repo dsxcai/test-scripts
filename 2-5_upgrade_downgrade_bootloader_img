@@ -1,7 +1,7 @@
 #!/bin/bash
 ( cd ../TOT/vendor_htc_flounder
   _h=$(git log -1 --format=%h)
-  git reset --hard origin/l-dev-pdk-flounder
+  git reset --hard ohd/l-dev-pdk-flounder
   cp bootloader.img /tmp/bootloader_orig.img
   . copy
   git commit -a -m "Hboot version: 3.x.0.2100"
