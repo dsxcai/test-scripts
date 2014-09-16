@@ -1,10 +1,17 @@
 #!/bin/bash
 
-declare _all_pt=/tmp/all_pt.zip
 declare _fastboot=../TOT/tools/bin/fastboot
-declare _adb=../TOT/tools/bin/adb
 declare _tot_image_path=../TOT/vendor_htc_flounder
-declare _test_image_path=../test/signed
+declare _bct_file=""
+
+if [[ -f "$_tot_image_path/$1" ]]; then
+	_bct_file="$1";
+	shift 1;
+else
+	_bct_file="Volantis64_924MHz_DRAM_BCT_20140605.cfg";
+fi
+
+echo "Assigned bct file: $_bct_file"
 
 ( cd $_tot_image_path; \
 sudo ./nvflash \
@@ -17,7 +24,7 @@ sudo ./nvflash \
 --applet nvtboot.img \
 && \
 sudo ./nvflash --resume \
---bct Volantis64_924MHz_DRAM_BCT_20140605.cfg \
+--bct $_bct_file \
 --setbct \
 --odmdata 0x80000 \
 --configfile flash_16g.cfg \
@@ -40,6 +47,7 @@ sudo ./nvflash --resume \
 --download EKS /tmp/eks.bin \
 --download BIF /tmp/bif.bin \
 --download EBT hboot_eng.img \
+--format_partition LNX \
 --bl hboot_eng.img \
 --preboot mts_preboot_prod \
 --bootpack mts_prod \
@@ -49,4 +57,6 @@ sudo ./nvflash --resume \
 
 sleep 2s
 sudo $_fastboot devices
-. 1-6_flash_TOT_bl_images $*
+if [[ "$_update_pt" != "false" ]]; then
+	. 1-6_flash_TOT_bl_images $*
+fi
