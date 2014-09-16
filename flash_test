@@ -18,9 +18,6 @@ for((i=1; i<=count; ++i)); do
 	ret=-1;
 	sudo ../TOT/tools/bin/fastboot -s $id oem battinfo
 	time $* || break;
-	sudo ../TOT/tools/bin/fastboot -s $id reboot-bootloader
-	sleep 2s;
-	. 2-1_flash_new_signed_bl_images -s $id
 	ret=0;
 done;
 
