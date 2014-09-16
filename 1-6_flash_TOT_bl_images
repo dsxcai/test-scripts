@@ -3,10 +3,10 @@ declare _all_pt=/tmp/all_pt.zip
 declare _fastboot=../TOT/tools/bin/fastboot
 declare _tot_image_path=../TOT/vendor_htc_flounder
 declare _test_image_path=../test/signed
-declare _build=""
+declare _build="_eng"
 
 if [[ "$SHIP" == "true" ]]; then
-	_build="_ship";
+	_build="";
 fi
 
 sudo $_fastboot $* \
