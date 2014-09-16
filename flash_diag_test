@@ -3,14 +3,16 @@
 declare count=$1
 declare o_ver=$2
 declare n_ver=$3
-declare _fastboot="sudo ../TOT/tools/bin/fastboot"
-declare o_hboot=../TOT/vendor_htc_flounder/hboot.img
+shift 3
+declare _fastboot="../TOT/tools/bin/fastboot"
+declare o_hboot=../test/signed/hboot_eng.img
 declare n_hboot=/tmp/hboot_diag.img
 
 compare_fastboot_ver()
 {
 	declare cmp_with=$1
-	declare the_ver=$($_fastboot getvar version-bootloader 2>&1 | grep 'version-bootloader' | cut -d " " -f 2)
+	shift 1
+	declare the_ver=$(sudo $_fastboot $* getvar version-bootloader 2>&1 | grep 'version-bootloader' | cut -d " " -f 2)
 
 	[[ "$cmp_with" == "$the_ver" ]]
 }
@@ -18,12 +20,17 @@ compare_fastboot_ver()
 cat $o_hboot | sed -r "s/$o_ver/$n_ver/g" > $n_hboot
 declare ret=-1
 
+. 2-1_flash_new_signed_bl_images $*
+rm -f /tmp/hbootz.zip; zip -j9 /tmp/hbootz.zip $o_hboot
+sudo $_fastboot $* erase boot
+sudo $_fastboot $* flash zip /tmp/hbootz.zip reboot-bootloader; sleep 2s
+
 for ((i=1;i<count;++i)); do
 	ret=-1
-	$_fastboot flash diag $n_hboot && sleep 4s && \
-	compare_fastboot_ver $n_ver && \
-	$_fastboot reboot-bootloader && sleep 2s && \
-	compare_fastboot_ver $o_ver || break
+	sudo $_fastboot $* flash diag $n_hboot && sleep 4s && \
+	compare_fastboot_ver $n_ver $* && \
+	sudo $_fastboot $* reboot-bootloader && sleep 2s && \
+	compare_fastboot_ver $o_ver $* || break
 	ret=0
 done
 
