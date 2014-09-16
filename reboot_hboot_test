@@ -11,6 +11,7 @@ dprint()
 
 for((i=1;i<=count;++i)); do
 	time ( dprint "## $i/$count ##\n";
+	sudo ../TOT/tools/bin/fastboot $* oem battinfo;
 	sudo ../TOT/tools/bin/fastboot $* reboot-bootloader;
 	sleep 2s )
 done
