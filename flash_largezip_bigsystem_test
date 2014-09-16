@@ -13,9 +13,10 @@ wait_to_bootup()
 
 get_partition_md5()
 {
-	sleep 30s;
+	sleep 5s;
 	echo -n "Counting MD5 of system partition..." >&2
-	adb $* wait-for-device shell md5 /dev/block/platform/sdhci-tegra.3/by-name/APP /dev/block/platform/sdhci-tegra.3/by-name/VNR
+	adb $* wait-for-device shell md5 /dev/block/platform/sdhci-tegra.3/by-name/APP 2>&1
+	sleep 2s;
 	echo " Done." >&2
 }
 
