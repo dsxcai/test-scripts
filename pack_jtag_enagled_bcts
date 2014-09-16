@@ -1,0 +1,35 @@
+#!/bin/bash
+
+declare _fastboot=../TOT/tools/bin/fastboot
+declare _htc_fastboot=~/bin/htc_fastboot
+declare _tot_image_path=../TOT/vendor_htc_flounder
+declare _bct_file=""
+declare _bl="$_tot_image_path/bootloader_eng.img"
+
+for i in $*; do
+	_bct_file="Volantis64_924MHz_DRAM_BCT_20140605_$i.cfg";
+	sudo $_fastboot oem reboot_nvflash
+	sleep 2s
+	_update_pt=false . tot-recover $_bct_file
+	sleep 2s
+	sudo $_fastboot oem reboot_nvflash
+	sleep 2s
+	( cd $_tot_image_path;
+	  sudo ./nvflash --read BCT /tmp/bct_$i.bin --bl hboot_eng.img --preboot mts_preboot_prod --bootpack mts_prod --applet nvtboot.img && \
+	  sudo ./nvflash --resume --download EKS /tmp/eks.bin --bl hboot_eng.img --preboot mts_preboot_prod --bootpack mts_prod --applet nvtboot.img --go
+	  sleep 2s );
+done
+
+if [[ ! -f "$_bl" ]]; then
+	_bl="$_tot_image_path/bootloader.img";
+fi
+
+unzip -o $_bl -d /tmp/
+cd /tmp
+mv hboot.img hboot_eng.img
+
+for i in $*; do
+	cp bct_$i.bin rawbct_eng.img
+	. ~/bin/sign_images eng user0; cp rawbct_eng.img rawbct_eng_$i.img
+	sleep 2s
+done;
