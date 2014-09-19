@@ -1,35 +1,34 @@
 #!/bin/bash
 
-declare _fastboot=../TOT/tools/bin/fastboot
+declare _fastboot=$(pwd)/../TOT/tools/bin/fastboot
 declare _htc_fastboot=~/bin/htc_fastboot
-declare _tot_image_path=../TOT/vendor_htc_flounder
+declare _tot_image_path=$(pwd)/../TOT/vendor_htc_flounder
 declare _bct_file=""
 declare _bl="$_tot_image_path/bootloader_eng.img"
-
-for i in $*; do
-	_bct_file="Volantis64_924MHz_DRAM_BCT_20140605_$i.cfg";
-	sudo $_fastboot oem reboot_nvflash
-	sleep 2s
-	_update_pt=false . tot-recover $_bct_file
-	sleep 2s
-	sudo $_fastboot oem reboot_nvflash
-	sleep 2s
-	( cd $_tot_image_path;
-	  sudo ./nvflash --read BCT /tmp/bct_$i.bin --bl hboot_eng.img --preboot mts_preboot_prod --bootpack mts_prod --applet nvtboot.img && \
-	  sudo ./nvflash --resume --download EKS /tmp/eks.bin --bl hboot_eng.img --preboot mts_preboot_prod --bootpack mts_prod --applet nvtboot.img --go
-	  sleep 2s );
-done
+declare _workdir=/tmp/bct_gen
 
 if [[ ! -f "$_bl" ]]; then
 	_bl="$_tot_image_path/bootloader.img";
 fi
 
-unzip -o $_bl -d /tmp/
-cd /tmp
-mv hboot.img hboot_eng.img
+mkdir -p $_workdir
+touch $_workdir/boot.img $_workdir/recovery.img $_workdir/system.img $_workdir/vendor.img $_workdir/board_info.bin $_workdir/eks.dat
+unzip -o $_bl -d $_workdir
+cp -fv ../TOT/tools/bin/nvflash_hack $_workdir
 
 for i in $*; do
-	cp bct_$i.bin rawbct_eng.img
-	. ~/bin/sign_images eng user0; cp rawbct_eng.img rawbct_eng_$i.img
-	sleep 2s
+	_bct_file="Volantis64_924MHz_DRAM_BCT_20140605_$i.cfg";
+	( cd $_workdir;
+	  rm -fv BCT rawbct*.img
+          ./nvflash_hack --bct $_bct_file --setbct --configfile $_tot_image_path/flash_16g.cfg --create --getpartitiontable LPT.txt --bl hboot.img --preboot mts_preboot_prod --bootpack mts_prod --go --transport simulation --deviceid 0x13 --devparams 4096 524288 29808;
+	  mv BCT bct_$i.bin
+        )
+done
+
+for _i2 in $*; do
+	( cd $_workdir;
+	  cp -v bct_$_i2.bin rawbct_eng.img;
+	  . ~/bin/sign_images eng user0; mv -v rawbct_eng.img rawbct_eng_$_i2.img;
+	  sleep 2s
+	)
 done;
