@@ -19,6 +19,7 @@ for((i=1; i<=count; ++i)); do
 	sudo ../TOT/tools/bin/fastboot -s $id oem battinfo
 	time $* || break;
 	ret=0;
+	sleep 1s;
 done;
 
 test $ret -eq 0 && dprint "SUCCESS\n" || dprint "FAIL\n"

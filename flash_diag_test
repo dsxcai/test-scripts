@@ -27,6 +27,7 @@ sudo $_fastboot $* flash zip /tmp/hbootz.zip reboot-bootloader; sleep 2s
 
 for ((i=1;i<count;++i)); do
 	ret=-1
+	echo "#### $i/$count ####"
 	sudo $_fastboot $* flash diag $n_hboot && sleep 4s && \
 	compare_fastboot_ver $n_ver $* && \
 	sudo $_fastboot $* reboot-bootloader && sleep 2s && \
