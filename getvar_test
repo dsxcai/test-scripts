@@ -25,6 +25,7 @@ declare -A _getvar_all='(
 	["partition-layout"]="Generic"
 	["build-mode"]="-"
 	["boot-mode"]="-"
+	["unlocked"]="-"
 	["commitno-bootloader"]="-"
 	["hbootpreupdate"]="1"
 	["gencheckpt"]="-"
