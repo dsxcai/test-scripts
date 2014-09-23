@@ -32,7 +32,7 @@ sudo ../TOT/tools/bin/fastboot $* \
 	flash vendor $_bigsystem_path/vendor.img \
 	flash cache $_bigsystem_path/cache.img \
 	reboot
-wait_to_bootup && res1=$(get_partition_md5) || res1="FAIL"
+wait_to_bootup $* && res1=$(get_partition_md5 $*) || res1="FAIL"
 echo "Bigsystem md5:"
 echo "$res1";
 
@@ -41,7 +41,7 @@ sleep 5s;
 sudo ../TOT/tools/bin/fastboot $* -w
 sudo ~/bin/htc_fastboot $* flash zip $_largezip_path/rom.img
 sudo ~/bin/htc_fastboot $* reboot
-wait_to_bootup && res2=$(get_partition_md5) || res2="FAIL"
+wait_to_bootup $* && res2=$(get_partition_md5 $*) || res2="FAIL"
 
 echo "$res1"
 echo "$res2"
