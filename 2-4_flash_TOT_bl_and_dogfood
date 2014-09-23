@@ -16,4 +16,4 @@ fi
 sudo $_fastboot $* \
 flash bootloader $_tot_image_path/bootloader${_build}.img
 
-. 2-2_flash_google_dogfood $*
+SHIP=$SHIP . 2-2_flash_google_dogfood $*

@@ -4,7 +4,7 @@ declare _fastboot=../TOT/tools/bin/fastboot
 declare _tot_image_path=../TOT/vendor_htc_flounder
 declare _test_image_path=../test/signed
 
-. 2-1_flash_new_signed_bl_images
+SHIP=$SHIP . 2-1_flash_new_signed_bl_images
 
 rm -f $_all_pt; zip -j9 $_all_pt $_tot_image_path/pt_*
 
