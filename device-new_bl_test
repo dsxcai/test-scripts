@@ -13,11 +13,10 @@ dprint()
 	printf "$_msg"
 }
 
-dprint "Unlock-critical partitions...\n"
-sudo $_fastboot $* oem set_unlock_ability 1
-sudo $_fastboot $* oem set_flash_state 1
+dprint "Please make sure the DUT is UNLOCKED, then press enter to continue..."; read
+
 dprint "Flashing volantis bootloaders@TOT...\n"
-. 1-6_flash_TOT_bl_images $*
+SHIP=true . 1-6_flash_TOT_bl_images $*
 dprint "Flashing volantis pdk@TOT...\n"
 . 1-7_flash_google_dogfood $*
 sleep 2s
@@ -28,7 +27,7 @@ sudo $_adb $* reboot-bootloader
 sleep 2s
 
 dprint "Flashing volantis testing bootloaders...\n"
-. 2-1_flash_new_signed_bl_images $*
+SHIP=true . 2-1_flash_new_signed_bl_images $*
 . 2-2_flash_google_dogfood $*
 sleep 2s
 dprint "Wait for device boot up, then press enter to continue..."; read
@@ -37,11 +36,30 @@ dprint "Check the box on screen to authenticate your adb host, then press enter 
 sudo $_adb $* reboot-bootloader
 sleep 2s
 
-dprint "Unlock-critical partitions...\n"
-sudo $_fastboot $* oem set_unlock_ability 1
-sudo $_fastboot $* oem set_flash_state 1
 dprint "Flashing volantis pdk@TOT with testing bootloaders...\n"
-. 2-3_flash_new_bl_and_dogfood $*
+SHIP=true . 2-3_flash_new_bl_and_dogfood $*
+sleep 2s
+dprint "Wait for device boot up, then press enter to continue..."; read
+sudo $_adb devices
+dprint "Check the box on screen to authenticate your adb host, then press enter to continue..."; read
+sudo $_adb $* reboot-bootloader
+sleep 2s
+
+dprint "Locking the testing bootloader...\n"
+sudo $_fastboot $* oem lock
+dprint "Wait for device back to fastboot, then press enter to continue..."; read
+sudo $_fastboot $* reboot
+sleep 2s
+dprint "Wait for device boot up, then press enter to continue..."; read
+sudo $_adb devices
+dprint "Check the unlock-ability and adb debugging boxed in the dev-options menu screen, then press enter to continue..."; read
+sudo $_adb $* reboot-bootloader
+sleep 2s
+
+dprint "Unlocking the testing bootloader..\n"
+sudo $_fastboot $* oem unlock
+dprint "Wait for device back to fastboot, then press enter to continue..."; read
+sudo $_fastboot $* reboot
 sleep 2s
 dprint "Wait for device boot up, then press enter to continue..."; read
 sudo $_adb devices
@@ -50,8 +68,12 @@ sudo $_adb $* reboot-bootloader
 sleep 2s
 
 dprint "Flashing volantis pdk@TOT with bootloaders@TOT...\n"
-. 2-4_flash_TOT_bl_and_dogfood $*
+SHIP=$SHIP . 2-4_flash_TOT_bl_and_dogfood $*
 sleep 2s
 dprint "Wait for device boot up, then press enter to continue..."; read
+sudo $_adb devices
+dprint "Check the box on screen to authenticate your adb host, then press enter to continue..."; read
 sudo $_adb $* reboot-bootloader
+sleep 2s
+dprint "Starting upgrade/downgrade test...\n"
 . 2-5_upgrade_downgrade_bootloader_img $*
