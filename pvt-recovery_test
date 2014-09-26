@@ -22,13 +22,13 @@ dprint "Backup EKS, MFG, and BIF, then recover pre-bootloaders to ToT...\n"
 
 ( cd $_tot_image_path;
 
-  touch system.img vendor.img boot.img recovery.img; cp hboot_eng.img hboot.img;
+  touch system.img vendor.img boot.img recovery.img; cp hboot_ship.img hboot.img;
 
   sudo ./nvflash \
   --read EKS /tmp/eks.bin \
   --read BIF /tmp/bif.bin \
   --read MFG /tmp/mfg.bin \
-  --bl ../$_test_image_path/hboot_eng.img \
+  --bl ../$_test_image_path/hboot_ship.img \
   --preboot ../$_test_image_path/mts_preboot_prod \
   --bootpack ../$_test_image_path/mts_prod \
   --applet ../$_test_image_path/nvtboot.img \
@@ -37,7 +37,7 @@ dprint "Backup EKS, MFG, and BIF, then recover pre-bootloaders to ToT...\n"
   --bct Volantis64_924MHz_DRAM_BCT_20140605.cfg \
   --setbct --odmdata 0x80000 \
   --configfile flash_16g.cfg --create \
-  --bl ../$_test_image_path/hboot_eng.img \
+  --bl ../$_test_image_path/hboot_ship.img \
   --preboot ../$_test_image_path/mts_preboot_prod \
   --bootpack ../$_test_image_path/mts_prod \
   --applet ../$_test_image_path/nvtboot.img \
@@ -46,10 +46,10 @@ dprint "Backup EKS, MFG, and BIF, then recover pre-bootloaders to ToT...\n"
   --download MFG /tmp/mfg.bin \
   --download EKS /tmp/eks.bin \
   --download BIF /tmp/bif.bin \
-  --download EBT ../../test/signed/hboot_eng.img \
+  --download EBT ../../test/signed/hboot_ship.img \
   --download NVC ../../test/signed/nvtboot.img \
   --format_partition LNX \
-  --bl ../$_test_image_path/hboot_eng.img \
+  --bl ../$_test_image_path/hboot_ship.img \
   --preboot ../$_test_image_path/mts_preboot_prod \
   --bootpack ../$_test_image_path/mts_prod \
   --applet ../$_test_image_path/nvtboot.img --go \
@@ -58,4 +58,4 @@ dprint "Backup EKS, MFG, and BIF, then recover pre-bootloaders to ToT...\n"
 )
 
 sleep 2s;
-. 2-1_flash_new_signed_bl_images $*
+SHIP=true . 1-6_flash_TOT_bl_images $*
