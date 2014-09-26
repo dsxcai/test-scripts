@@ -5,8 +5,8 @@ _dest_dir=dashboard_hboot_build
 _tot_vendor=../../TOT/vendor_htc_flounder
 
 _cl=$1
-_ship=$_download_dir/${_cl}_T1_Generic_WWE_K44_Mainline_GEP_SHIP_64bits_hboot_java7.zip
-_eng=$_download_dir/${_cl}_T1_Generic_WWE_K44_Mainline_GEP_64bits_hboot_java7.zip
+_ship=$(ls $_download_dir/${_cl}_T1_Generic_WWE_K44_*_GEP_SHIP_64bits_hboot_java7.zip 2>/dev/null)
+_eng=$(ls $_download_dir/${_cl}_T1_Generic_WWE_K44_*_GEP{,_ENG}_64bits_hboot_java7.zip 2>/dev/null)
 
 if [[ "$_cl" -ne 0 ]]; then
 	rm -rf $_dest_dir/*
