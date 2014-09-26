@@ -9,6 +9,7 @@ fi
   _h=$(git log -1 --format=%h)
   git reset --hard ohd/l-dev-pdk-flounder
   cp bootloader.img /tmp/bootloader_orig.img
+  rm -f hboot* rawbct*
   . copy
   git commit -a -m "Hboot version: 3.99.0"
   ./mkimg.py

@@ -13,7 +13,5 @@ if [[ "$SHIP" == "true" ]]; then
 	_build="_ship";
 fi
 
-sudo $_fastboot $* \
-flash bootloader $_tot_image_path/bootloader${_build}.img
-
+SHIP=$SHIP . 1-6_flash_TOT_bl_images $*
 SHIP=$SHIP . 2-2_flash_google_dogfood $*
