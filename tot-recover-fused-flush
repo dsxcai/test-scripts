@@ -5,23 +5,12 @@ declare _tot_image_path=../TOT/vendor_htc_flounder
 declare _test_image_path=../recover_fused
 
 ( cd $_test_image_path; \
-  rm -f system.img vendor.img boot.img recovery.img /tmp/mfg.bin;
+  sudo rm -f system.img vendor.img boot.img recovery.img /tmp/mfg.bin;
   touch system.img vendor.img boot.img recovery.img /tmp/mfg.bin;
-  cp -fv board_info.bin /tmp/bif.bin;
-  cp -fv eks.dat /tmp/eks.bin;
+  sudo cp -fv board_info.bin /tmp/bif.bin;
+  sudo cp -fv eks.dat /tmp/eks.bin;
   sudo ./nvflash \
 	--blob blob.bin \
-	--bct s_recover_rawbct.bct \
-	--read EKS /tmp/eks.bin \
-	--read BIF /tmp/bif.bin \
-	--read MFG /tmp/mfg.bin \
-	--applet s_recover_nvtboot.img \
-	--bootpack mts_prod \
-	--preboot mts_preboot_prod \
-	--bl s_recover_hboot.img \
-	--go \
-&& \
-  sudo ./nvflash --resume \
 	--bct s_recover_rawbct.bct \
 	--setbct \
 	--odmdata 0x80000 \
@@ -31,7 +20,8 @@ declare _test_image_path=../recover_fused
 	--bootpack mts_prod \
 	--preboot mts_preboot_prod \
 	--bl s_recover_hboot.img \
-	--go \
+	--go;
+  sudo rm -f system.img vendor.img boot.img recovery.img /tmp/mfg.bin /tmp/bif.bin /tmp/eks.bin
 )
 
 sleep 2s
