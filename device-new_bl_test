@@ -13,20 +13,44 @@ dprint()
 	printf "$_msg"
 }
 
-wait_for_boot_completed_and_reboot()
+
+wait_for_boot_completed()
 {
 	while ! ( sudo $_adb $* wait-for-device logcat -d | grep -m 1 'android.intent.action.BOOT_COMPLETED' ); do
 		dprint "Waiting for device boot up...\n";
 		sleep 10s
 	done
+}
 
+wait_for_boot_completed_and_reboot()
+{
+	wait_for_boot_completed $*
 	adb_reboot_bootloader $*
+}
+
+wait_for_boot_completed_and_unlock()
+{
+	wait_for_boot_completed $*
+	adb_unlock_ability $*
 }
 
 adb_reboot_bootloader()
 {
 	dprint "Rebooting...\n";
 	sudo $_adb $* reboot-bootloader
+	sleep 2s
+}
+
+adb_unlock_ability()
+{
+	local part_name="PST"
+	local pst_path="/dev/block/platform/sdhci-tegra.3/by-name/$part_name"
+	local tmp="/tmp"
+	sudo $_adb $* pull $pst_path $tmp
+	xxd -c 1 -s -1 $tmp/$part_name | sed -r "s/: 00/: 01/g" | xxd -c 1 -r > $tmp/${part_name}_1
+	sudo $_adb $* push $tmp/${part_name}_1 /data
+	sudo $_adb $* shell dd if=/data/${part_name}_1 of=$pst_path
+	sudo $_adb $*reboot-bootloader
 	sleep 2s
 }
 
@@ -56,18 +80,18 @@ sleep 20s
 dprint "Wait for device back to fastboot....\n";
 sudo $_fastboot $* reboot
 sleep 2s
-dprint "Wait for device boot up, then press enter to continue..."; read
-sudo $_adb devices
-dprint "Check the unlock-ability and adb debugging boxed in the dev-options menu screen, then press enter to continue..."; read
-adb_reboot_bootloader $*
-sleep 2s
+dprint "Wait for device boot up...";
+wait_for_boot_completed_and_unlock $*
 
 dprint "Unlocking the testing bootloader..\n"
 sudo $_fastboot $* oem unlock
-dprint "Wait for device back to fastboot, then press enter to continue..."; read
+sleep 20s
+dprint "Wait for device back to fastboot....\n";
 sudo $_fastboot $* reboot
 sleep 2s
+dprint "Wait for device boot up...";
 wait_for_boot_completed_and_reboot $*
+sleep 2s
 
 dprint "Flashing volantis pdk@TOT with bootloaders@TOT...\n"
 SHIP=true . 1-6_flash_TOT_bl_images $*
