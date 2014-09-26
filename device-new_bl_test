@@ -13,6 +13,23 @@ dprint()
 	printf "$_msg"
 }
 
+wait_for_boot_completed_and_reboot()
+{
+	while ! ( sudo $_adb $* wait-for-device logcat -d | grep -m 1 'android.intent.action.BOOT_COMPLETED' ); do
+		dprint "Waiting for device boot up...\n";
+		sleep 10s
+	done
+
+	adb_reboot_bootloader $*
+}
+
+adb_reboot_bootloader()
+{
+	dprint "Rebooting...\n";
+	sudo $_adb $* reboot-bootloader
+	sleep 2s
+}
+
 dprint "Please make sure the DUT is UNLOCKED, then press enter to continue..."; read
 
 dprint "Flashing volantis bootloaders@TOT...\n"
@@ -20,40 +37,29 @@ SHIP=true . 1-6_flash_TOT_bl_images $*
 dprint "Flashing volantis pdk@TOT...\n"
 . 1-7_flash_google_dogfood $*
 sleep 2s
-dprint "Wait for device boot up, then press enter to continue..."; read
-sudo $_adb devices
-dprint "Check the box on screen to authenticate your adb host, then press enter to continue..."; read
-sudo $_adb $* reboot-bootloader
-sleep 2s
+wait_for_boot_completed_and_reboot $*
 
 dprint "Flashing volantis testing bootloaders...\n"
 SHIP=true . 2-1_flash_new_signed_bl_images $*
 . 2-2_flash_google_dogfood $*
 sleep 2s
-dprint "Wait for device boot up, then press enter to continue..."; read
-sudo $_adb devices
-dprint "Check the box on screen to authenticate your adb host, then press enter to continue..."; read
-sudo $_adb $* reboot-bootloader
-sleep 2s
+wait_for_boot_completed_and_reboot $*
 
 dprint "Flashing volantis pdk@TOT with testing bootloaders...\n"
 SHIP=true . 2-3_flash_new_bl_and_dogfood $*
 sleep 2s
-dprint "Wait for device boot up, then press enter to continue..."; read
-sudo $_adb devices
-dprint "Check the box on screen to authenticate your adb host, then press enter to continue..."; read
-sudo $_adb $* reboot-bootloader
-sleep 2s
+wait_for_boot_completed_and_reboot $*
 
 dprint "Locking the testing bootloader...\n"
 sudo $_fastboot $* oem lock
-dprint "Wait for device back to fastboot, then press enter to continue..."; read
+sleep 20s
+dprint "Wait for device back to fastboot....\n";
 sudo $_fastboot $* reboot
 sleep 2s
 dprint "Wait for device boot up, then press enter to continue..."; read
 sudo $_adb devices
 dprint "Check the unlock-ability and adb debugging boxed in the dev-options menu screen, then press enter to continue..."; read
-sudo $_adb $* reboot-bootloader
+adb_reboot_bootloader $*
 sleep 2s
 
 dprint "Unlocking the testing bootloader..\n"
@@ -61,19 +67,22 @@ sudo $_fastboot $* oem unlock
 dprint "Wait for device back to fastboot, then press enter to continue..."; read
 sudo $_fastboot $* reboot
 sleep 2s
-dprint "Wait for device boot up, then press enter to continue..."; read
-sudo $_adb devices
-dprint "Check the box on screen to authenticate your adb host, then press enter to continue..."; read
-sudo $_adb $* reboot-bootloader
-sleep 2s
+wait_for_boot_completed_and_reboot $*
 
 dprint "Flashing volantis pdk@TOT with bootloaders@TOT...\n"
-SHIP=$SHIP . 2-4_flash_TOT_bl_and_dogfood $*
+SHIP=true . 1-6_flash_TOT_bl_images $*
+SHIP=true . 2-1_flash_new_signed_bl_images $*
+SHIP=true . 2-4_flash_TOT_bl_and_dogfood $*
 sleep 2s
-dprint "Wait for device boot up, then press enter to continue..."; read
-sudo $_adb devices
-dprint "Check the box on screen to authenticate your adb host, then press enter to continue..."; read
-sudo $_adb $* reboot-bootloader
+wait_for_boot_completed_and_reboot $*
+
+dprint "Flashing testing bootloader...\n"
+SHIP=true . 2-1_flash_new_signed_bl_images $*
 sleep 2s
+sudo ../TOT/tools/bin/htc_fastboot $* flash zip ../test/largezip/0P82IMG*
+sudo ../TOT/tools/bin/htc_fastboot $* reboot
+sleep 2s
+wait_for_boot_completed_and_reboot $*
+
 dprint "Starting upgrade/downgrade test...\n"
-. 2-5_upgrade_downgrade_bootloader_img $*
+SHIP=true . 2-5_upgrade_downgrade_bootloader_img $*
