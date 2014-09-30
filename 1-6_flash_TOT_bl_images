@@ -9,6 +9,7 @@ if [[ "$SHIP" == "true" ]]; then
 	_build="";
 fi
 
+sudo $_fastboot $* flash hboot $_tot_image_path/mts_prod
 sudo $_fastboot $* \
 flash bootloader $_tot_image_path/bootloader${_build}.img \
 reboot-bootloader

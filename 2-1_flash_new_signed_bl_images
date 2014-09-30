@@ -9,6 +9,7 @@ if [[ "$SHIP" == "true" ]]; then
 	_build="_ship";
 fi
 
+sudo $_fastboot $* flash hboot $_test_image_path/mts_prod
 sudo $_fastboot $* \
 flash bct $_test_image_path/rawbct${_build}.img \
 flash hboot $_test_image_path/hboot${_build}.img \
