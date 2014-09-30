@@ -50,7 +50,7 @@ adb_unlock_ability()
 	xxd -c 1 -s -1 $tmp/$part_name | sed -r "s/: 00/: 01/g" | xxd -c 1 -r > $tmp/${part_name}_1
 	sudo $_adb $* push $tmp/${part_name}_1 /data
 	sudo $_adb $* shell dd if=/data/${part_name}_1 of=$pst_path
-	sudo $_adb $*reboot-bootloader
+	sudo $_adb $* reboot-bootloader
 	sleep 2s
 }
 
