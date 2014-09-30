@@ -2,12 +2,16 @@
 
 declare _largezip_path=../test/largezip
 declare _bigsystem_path=../test/bigsystem
+declare _adb=../TOT/tools/bin/adb
+
+sudo $_adb kill-server
+sudo $_adb devices
 
 wait_to_bootup()
 {
 	sleep 10s;
 	echo -n "Waiting for device booting up..." >&2
-	adb $* wait-for-device root && sleep 2s
+	sudo $_adb $* wait-for-device root && sleep 2s
 	echo " Done." >&2
 }
 
@@ -15,7 +19,7 @@ get_partition_md5()
 {
 	sleep 5s;
 	echo -n "Counting MD5 of system partition..." >&2
-	adb $* wait-for-device shell md5 /dev/block/platform/sdhci-tegra.3/by-name/APP 2>&1
+	sudo $_adb $* wait-for-device shell md5 /dev/block/platform/sdhci-tegra.3/by-name/APP 2>&1
 	sleep 2s;
 	echo " Done." >&2
 }
@@ -36,7 +40,7 @@ wait_to_bootup $* && res1=$(get_partition_md5 $*) || res1="FAIL"
 echo "Bigsystem md5:"
 echo "$res1";
 
-adb $* reboot-bootloader
+sudo $_adb $* reboot-bootloader
 sleep 5s;
 sudo ../TOT/tools/bin/fastboot $* -w
 sudo ~/bin/htc_fastboot $* flash zip $_largezip_path/rom.img
