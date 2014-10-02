@@ -18,10 +18,10 @@ fi
   for((i=1; i<=_count; ++i)); do
 	echo "##### Test $i/$_count ####"
 	sudo ../tools/bin/fastboot $* oem battinfo
-	sudo ../tools/bin/fastboot $* flash hboot /tmp/bootloader_orig.img
+	sudo ../tools/bin/fastboot $* flash mts_prod ../tools/bin/fastboot
 	sudo ../tools/bin/fastboot $* flash bootloader /tmp/bootloader_orig.img reboot-bootloader
 	sleep 2s
-	sudo ../tools/bin/fastboot $* flash hboot /tmp/bootloader_new.img
+	sudo ../tools/bin/fastboot $* flash mts_prod ../tools/bin/fastboot
 	sudo ../tools/bin/fastboot $* flash bootloader /tmp/bootloader_new.img reboot-bootloader
 	sleep 2s
   done;
