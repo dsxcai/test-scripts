@@ -7,7 +7,7 @@ fi
 
 ( cd ../TOT/vendor_htc_flounder
   _h=$(git log -1 --format=%h)
-  git reset --hard ohd/l-dev-pdk-flounder
+  git reset --hard ohd/l-mr1-dev-flounder
   cp bootloader.img /tmp/bootloader_orig.img
   rm -f hboot* rawbct*
   . copy
