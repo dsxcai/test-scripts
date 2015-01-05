@@ -43,7 +43,8 @@ echo "$res1";
 sudo $_adb $* reboot-bootloader
 sleep 5s;
 sudo ../TOT/tools/bin/fastboot $* -w
-sudo ~/bin/htc_fastboot $* flash zip $_largezip_path/rom.img
+sudo ~/bin/htc_fastboot $* flash zip $_largezip_path/0P82IMG_*.zip
+sudo ~/bin/htc_fastboot $* flash zip $_largezip_path/0P82IMG-*.zip
 sudo ~/bin/htc_fastboot $* reboot
 wait_to_bootup $* && res2=$(get_partition_md5 $*) || res2="FAIL"
 
