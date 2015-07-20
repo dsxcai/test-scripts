@@ -1,0 +1,64 @@
+#!/bin/bash
+smb_exe()
+{
+	_smb_client='smbclient -U NVsign \\10.8.9.172\signednv HTCsignNV'
+	echo -e "$*" | $_smb_client
+}
+
+_build="$1"
+_user="$2"
+_gpg="$3"
+_blob=""
+[[ "$_gpg" != "" ]] && _blob="blob.bin.gpg"
+
+_put_list="mts_prod mts_preboot_prod rawbct_${_build}.img hboot_${_build}.img nvtboot.img        nvtbootwb0.bin        tos.img $_gpg"
+_get_list="mts_prod mts_preboot_prod rawbct_signed.bct    hboot_signed.img    nvtboot_signed.img nvtbootwb0_signed.bin         $_blob"
+rm -f blob.bin_${_build}.gpg
+
+if smb_exe "posix\nls $_user" | grep NT_STATUS_NO_SUCH_FILE; then
+	_cmd=$(cat <<-EOF
+		posix\n
+		prompt\n
+		md $_user\n
+		cd $_user\n
+		mput $_put_list\n
+		rename rawbct_${_build}.img rawbct.img
+		rename hboot_${_build}.img hboot.img
+		mput enabled_t1\n
+		EOF
+	)
+	_signed=0
+
+	touch enabled_t1
+	smb_exe "$_cmd"
+	rm enabled_t1
+	for((i=1; i<=20; ++i)); do
+		echo "... Waiting for signing ..."
+		sleep 5s
+		if smb_exe "posix\ncd $_user\nls hboot.img" | grep NT_STATUS_NO_SUCH_FILE; then
+			echo "... Done ..."
+			sleep 10s
+			_signed=1
+			break;
+		fi
+	done
+	if [[ $_signed -eq 1 ]]; then
+		_cmd=$(cat <<-EOF
+			posix\n
+			prompt\n
+			cd $_user\n
+			mget $_get_list\n
+			rm *\n
+			cd ../\n
+			rd $_user\n
+			EOF
+		)
+		smb_exe "$_cmd"
+		. ~/bin/rename _$_build
+		md5sum mts_prod mts_preboot_prod tos.img rawbct_* hboot_* nvtboot* blob.bin* | tee info.txt
+	else
+		echo "Sign images timeout"
+	fi
+else
+	echo "Sign server is using by someone, now..."
+fi
