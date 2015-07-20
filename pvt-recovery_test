@@ -13,10 +13,10 @@ dprint()
 	printf "$_msg"
 }
 
-. 2-1_flash_new_signed_bl_images $*
-sleep 2s;
-sudo $_fastboot $* oem reboot_nvflash
-sleep 2s;
+#. 2-1_flash_new_signed_bl_images $*
+#sleep 2s;
+#sudo $_fastboot $* oem reboot_nvflash
+#sleep 2s;
 
 dprint "Backup EKS, MFG, and BIF, then recover pre-bootloaders to ToT...\n"
 
